@@ -426,6 +426,7 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 
 ```yaml
 services:
+  # ========== PostgreSQL ==========
   postgres:
     image: postgres:16-alpine
     container_name: postgres_db
@@ -434,6 +435,7 @@ services:
       POSTGRES_DB: satellite_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      # Создаём схемы при старте
       POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
     ports:
       - "5432:5432"
@@ -448,6 +450,22 @@ services:
     networks:
       - space-network
 
+  # ========== Redis ==========
+  redis:
+    image: redis:7.4-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - space-network
+
+  # ========== Kafka ==========
   kafka:
     image: apache/kafka:3.7.0
     container_name: kafka
@@ -476,6 +494,7 @@ services:
     networks:
       - space-network
 
+  # ========== Kafka UI ==========
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui
@@ -492,6 +511,7 @@ services:
     networks:
       - space-network
 
+  # ========== Telemetry Service ==========
   telemetry-service:
     build: ./TelemetryService
     container_name: telemetry-service
@@ -523,6 +543,7 @@ services:
     networks:
       - space-network
 
+  # ========== Server ==========
   server:
     build: ./Server
     container_name: server
@@ -533,6 +554,8 @@ services:
       kafka:
         condition: service_healthy
       telemetry-service:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     environment:
       - SERVER_PORT=8080
@@ -547,6 +570,9 @@ services:
       - SPRING_FLYWAY_SCHEMAS=server_schema
       - SPRING_FLYWAY_BASELINE_ON_MIGRATE=true
       - MANAGEMENT_HEALTH_GRPC_ENABLED=false
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - SPRING_CACHE_REDIS_TIME_TO_LIVE=600000
     ports:
       - "8080:8080"
     healthcheck:
@@ -558,6 +584,7 @@ services:
     networks:
       - space-network
 
+  # ========== Mission Service ==========
   mission-service:
     build: ./Client
     container_name: mission-service
@@ -608,11 +635,12 @@ docker-compose up --build
 
 **Что произойдёт:**
 1. Запустится PostgreSQL (ждём healthcheck) → создаст схемы `server_schema`, `telemetry_schema`
-2. Запустится Kafka (ждём healthcheck)
-3. Запустится Kafka UI
-4. Запустится Telemetry Service (создаст таблицу `inbox`)
-5. Запустится Server (миграции V1-V4, создание таблиц и outbox)
-6. Запустится Mission Service (ждёт Server и Kafka)
+2. Запустится Redis
+3. Запустится Kafka (ждём healthcheck)
+4. Запустится Kafka UI
+5. Запустится Telemetry Service (создаст таблицу `inbox`)
+6. Запустится Server (миграции V1-V4, создание таблиц и outbox)
+7. Запустится Mission Service (ждёт Server и Kafka)
 
 ### Шаг 3: Фоновый запуск
 
@@ -701,6 +729,19 @@ SELECT * FROM telemetry_schema.inbox;
 
 # Выйти
 \q
+```
+
+### 5. Проверка Redis
+
+```bash
+docker exec -it redis redis-cli ping
+# Ответ: PONG
+
+# Посмотреть кэш в Redis
+docker exec -it redis redis-cli
+> KEYS *
+> TTL space:constellation::Орбита-1
+> GET space:constellation::Орбита-1
 ```
 
 ### 6. Дополнительные проверки
