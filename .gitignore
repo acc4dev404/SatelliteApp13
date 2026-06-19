@@ -1,0 +1,235 @@
+# ============================================
+# Java
+# ============================================
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.tmp
+*.swp
+*.lock
+*.DS_Store
+
+# ============================================
+# Maven
+# ============================================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ============================================
+# Gradle
+# ============================================
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# ============================================
+# Spring Boot
+# ============================================
+application-local.yml
+application-dev.yml
+application-prod.yml
+*.pid
+*.orig
+*.iml
+*.ipr
+*.iws
+.idea/
+spring-shell.log
+
+# ============================================
+# Docker
+# ============================================
+*.pid
+docker-compose.override.yml
+.dockerignore
+*.tar.gz
+
+# ============================================
+# IntelliJ IDEA
+# ============================================
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+.idea/.gitignore
+.idea/compiler.xml
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/runConfigurations/
+.idea/jarRepositories.xml
+.idea/dataSources/
+.idea/dataSources.local.xml
+.idea/sqlDataSources.xml
+.idea/dbnavigator.xml
+.idea/markdown-navigator.xml
+.idea/markdown-navigator-env.xml
+.idea/vcs.xml
+
+# ============================================
+# VS Code
+# ============================================
+.vscode/
+*.code-workspace
+.settings/
+.project
+.classpath
+
+# ============================================
+# Eclipse
+# ============================================
+.settings/
+.project
+.classpath
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+.loadpath
+.factorypath
+.apt_generated/
+.apt_generated_tests/
+.ivy/
+.local/
+.springBeans
+.sts4-cache/
+
+# ============================================
+# NetBeans
+# ============================================
+nbproject/
+nbactions.xml
+nb-configuration.xml
+*.orig
+
+# ============================================
+# Logs
+# ============================================
+logs/
+*.log
+log/
+*.log.gz
+logs/gateway/
+logs/analysis/
+*.log
+
+# ============================================
+# Data directories (local volumes)
+# ============================================
+data/
+data/postgres/
+data/storage-uploads/
+data/analysis-reports/
+data/analysis-wordclouds/
+
+# Keep the directory structure but ignore files
+data/**/*
+!data/.gitkeep
+
+# ============================================
+# Test results
+# ============================================
+test-output/
+TEST-*.xml
+TEST-*.txt
+*.junit
+surefire-reports/
+failsafe-reports/
+jacoco.exec
+.jacoco-report/
+
+# ============================================
+# JaCoCo reports
+# ============================================
+target/site/jacoco/
+jacoco-report/
+*.exec
+
+# ============================================
+# OS generated files
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.bak
+*.~
+
+# ============================================
+# Environment files
+# ============================================
+.env
+.env.local
+.env.*.local
+*.secret
+.secrets
+
+# ============================================
+# Temporary files
+# ============================================
+tmp/
+temp/
+*.tmp
+*.temp
+*.cache
+*.dump
+
+# ============================================
+# Heap dumps
+# ============================================
+*.hprof
+*.heap
+
+# ============================================
+# Uploads and generated files
+# ============================================
+uploads/
+wordclouds/
+reports/
+
+# ============================================
+# STS
+# ============================================
+.apt_generated/
+.springBeans/
+.sts4-cache/
+
+# ============================================
+# JetBrains
+# ============================================
+.idea/sonarlint/
+.idea/shelf/
+.idea/dictionaries/
+.idea/httpRequests/
+.idea/codeStyles/
+.idea/inspectionProfiles/
+
+# ============================================
+# Secret keys
+# ============================================
+*.pem
+*.key
+*.crt
+*.p12

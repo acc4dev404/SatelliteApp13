@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package telemetry;
+
+option java_package = "ru.bmstu.telemetry.proto";
+option java_multiple_files = true;
+
+// Запрос на получение телеметрии
+message TelemetryRequest {
+    // Можно добавить фильтры в будущем
+    bool stream_all = 1;
+}
+
+// Обновление телеметрии для одного спутника
+message TelemetryUpdate {
+    string satellite_name = 1;
+    double internal_temperature = 2;  // температура внутри (°C)
+    double external_temperature = 3;   // температура снаружи (°C)
+    double battery_voltage = 4;        // напряжение батареи (В)
+    int64 timestamp = 5;               // Unix timestamp
+}
+
+// Сервис телеметрии
+service TelemetryService {
+    // Server streaming RPC для непрерывной передачи телеметрии
+    rpc StreamTelemetry(TelemetryRequest) returns (stream TelemetryUpdate);
+}

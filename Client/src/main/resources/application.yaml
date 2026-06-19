@@ -1,0 +1,41 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  application:
+    name: mission-scheduler
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: ${spring.application.name}
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        allow.auto.create.topics: true
+        spring.json.trusted.packages: "*"
+        spring.json.type.mapping: satellite-event:ru.bmstu.scheduler.kafka.SatelliteEvent
+
+app:
+  space-center-service:
+    url: ${APP_SPACE_CENTER_SERVICE_URL:http://localhost:8080/api}
+    missions:
+      - targetType: CONSTELLATION
+        constellationName: "Орбита-1"
+        cron: "0 */1 * * * *"           # каждую минуту
+
+      - targetType: CONSTELLATION
+        constellationName: "Орбита-2"
+        cron: "0 */2 * * * *"           # каждые 2 минуты
+
+      - targetType: SINGLE_SATELLITE
+        constellationName: "Орбита-1"
+        satelliteName: "Связь-1"
+        cron: "0 */3 * * * *"           # каждые 3 минуты
+
+logging:
+  level:
+    ru.bmstu.scheduler: INFO
+    org.springframework.kafka: INFO

@@ -1,0 +1,114 @@
+app:
+  demo:
+    enabled: true
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,cache,prometheus
+  endpoint:
+    cache:
+      enabled: true
+  metrics:
+    enable:
+      cache: true
+      all: true
+    tags:
+        application: space-operation-center
+
+grpc:
+  client:
+    telemetry-service:
+      address: ${GRPC_CLIENT_TELEMETRY_SERVICE_ADDRESS:static://localhost:9091}
+      negotiation-type: ${GRPC_CLIENT_TELEMETRY_SERVICE_NEGOTIATION_TYPE:plaintext}
+
+spring:
+
+  application:
+    name: space-operation-center
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/satellite_db?currentSchema=server_schema}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: ${JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    schemas: server_schema
+    baseline-on-migrate: true
+    baseline-version: 0
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: satellite-event:ru.bmstu.kafka.SatelliteEvent
+    consumer:
+      group-id: ${spring.application.name}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.type.mapping: satellite-event:ru.bmstu.kafka.SatelliteEvent
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000
+      cache-null-values: false
+      key-prefix: "space:"
+      use-key-prefix: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 5000ms
+      connect-timeout: 3000ms
+      fail-on-connection: false
+      client-type: lettuce
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+outbox:
+  batch:
+    size: 100
+  scheduler:
+    fixedDelay: 5000
+    initialDelay: 5000
+  cleanup:
+    cron: "0 0 0 * * *"
+
+logging:
+  level:
+    ru.bmstu: DEBUG
+    org.hibernate.SQL: ${HIBERNATE_SQL_DEBUG:WARN}
+    org.flywaydb: INFO
+    io.grpc: INFO
+    org.springframework.kafka: INFO
+    org.springframework.cache: TRACE
+    org.springframework.cache.interceptor: TRACE
