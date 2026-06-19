@@ -731,7 +731,7 @@ SELECT * FROM telemetry_schema.inbox;
 \q
 ```
 
-### 5. Проверка Redis
+### 6. Проверка Redis
 
 ```bash
 docker exec -it redis redis-cli ping
@@ -744,7 +744,7 @@ docker exec -it redis redis-cli
 > GET space:constellation::Орбита-1
 ```
 
-### 6. Дополнительные проверки
+### 7. Дополнительные проверки
 
 ```bash
 # Проверка уникальных ограничений
